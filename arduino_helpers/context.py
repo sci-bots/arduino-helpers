@@ -14,9 +14,56 @@ from .hardware.arduino import (get_libraries_dir_by_family,
                                get_cores_dir_by_family, get_arduino_dir_root)
 
 
+def nested_dict_iter(nested_dict, keys=None):
+    if keys is None:
+        keys = []
+    for k, v in nested_dict.iteritems():
+        if isinstance(v, dict):
+            for nested_keys, nested_v in nested_dict_iter(v, keys=keys + [k]):
+                yield nested_keys, nested_v
+        else:
+            yield keys + [k], v
+
+
+def dump_nested_dict(nested_dict, depth=0, dump_values=False):
+    for k, v in nested_dict.iteritems():
+        print ('  ' * depth) + '-%s' % k,
+        if isinstance(v, dict):
+            print ''
+            dump_nested_dict(v, depth=depth + 1)
+        elif dump_values:
+            print ':', v
+        else:
+            print ''
+
+
+def resolve(config_dict, var, default_value=None, error_on_not_found=False):
+    if not re.match(r'{[a-zA-Z_]+(\.[a-zA-Z_]+)*}', var):
+        raise ValueError, 'Invalid variable "%s"' % var
+    keys = var[1:-1].split('.')
+    value = config_dict
+    for k in keys:
+        if error_on_not_found:
+            value = value[k]
+        elif value is not None:
+            value = value.get(k, default_value)
+    return value
+
+
 class ArduinoContext(object):
     def __init__(self, arduino_install_home):
         self.arduino_home_path = path(arduino_install_home)
+        arduino_home = self.arduino_home_path
+        match = re.search(r'''
+            ^ARDUINO \s+
+            (?P<major>\d+) \. (?P<minor>\d+) \. (?P<micro>\d+)'''.strip(),
+            arduino_home.joinpath('revisions.txt').bytes(),
+            re.VERBOSE | re.MULTILINE)
+        self.runtime_config = {'runtime': {'ide': {'path': arduino_home,
+                                                   'version': '%s_%s_%s' %
+                                                   (match.group('major'),
+                                                    match.group('minor'),
+                                                    match.group('micro'))}}}
 
     def get_platform_config_by_family(self):
         return get_platform_config_by_family(self.arduino_home_path)
@@ -82,19 +129,34 @@ class Board(object):
         self.bootloaders_dir = (self.arduino_context
                                 .get_bootloaders_dir_by_family()[self.family])
         self.combined_config = deepcopy(self.config)
+        arduino_home = self.arduino_context.arduino_home_path
+        self.build_config = {'build': {'arch': self.family.upper(), 'system':
+                                       {'path':
+                                        arduino_home.joinpath('hardware',
+                                                              'arduino',
+                                                              self.family
+                                                              .lower(),
+                                                              'system')}}}
+        merge(self.combined_config, self.arduino_context.runtime_config)
         merge(self.combined_config, self.platform)
+        merge(self.combined_config, self.build_config)
+        if self.resolve('{compiler.path}') is None:
+            compiler_path = self.resolve_recursive('{runtime.ide.path}/'
+                                                   'hardware/tools/%s/bin' %
+                                                   self.family.lower())[0]
+            if path(compiler_path).expand().isdir():
+                self.combined_config['compiler']['path'] = compiler_path
 
-    def resolve(self, var):
-        if not re.match(r'{[a-zA-Z_]+(\.[a-zA-Z_]+)*}', var):
-            raise ValueError, 'Invalid variable "%s"' % var
-        keys = var[1:-1].split('.')
-        value = self.combined_config
-        for k in keys:
-            value = value.get(k, None)
-        return value
+    def resolve(self, var, extra_dicts=None):
+        if extra_dicts is None:
+            extra_dicts = []
+        for config_dict in [self.combined_config] + list(extra_dicts):
+            value = resolve(config_dict, var)
+            if value is not None:
+                return value
 
-    def resolve_arduino_vars(self, pattern):
-        var_map = dict([(var, self.resolve(var))
+    def resolve_arduino_vars(self, pattern, extra_dicts=None):
+        var_map = dict([(var, self.resolve(var, extra_dicts))
                          for var in re.findall(r'{.*?}', pattern)])
         cmd = pattern[:]
         unresolved = []
@@ -107,6 +169,32 @@ class Board(object):
                 cmd = cmd.replace(var, value)
                 resolved.append((var, value))
         return cmd, unresolved
+
+    def resolve_recursive(self, config_str, extra_dicts=None):
+        cre_var = re.compile(r'({[a-zA-Z_]+(\.[a-zA-Z_]+)*})')
+        resolved_str = None
+
+        resolved_str, unresolved = self.resolve_arduino_vars(config_str,
+                                                             extra_dicts)
+
+        most_recent_unresolved_matches = None
+        unresolved_matches = cre_var.findall(resolved_str)
+
+        # Since Arduino configuration values may contain `{...}`-style
+        # replacement strings, retry resolving variables until all remaining
+        # replacement strings cannot be resolved using the available
+        # configuration data.
+        while (resolved_str is None or most_recent_unresolved_matches !=
+               unresolved_matches):
+            resolved_str, unresolved = self.resolve_arduino_vars(resolved_str,
+                                                                 extra_dicts)
+            most_recent_unresolved_matches = unresolved_matches
+            unresolved_matches = cre_var.findall(resolved_str)
+        # Without the replacement below, some strings have extraneous escaped
+        # quotes, _e.g._,
+        #   \'-DUSB_MANUFACTURER="Unknown"\' \'-DUSB_PRODUCT="Arduino Due"\'
+        resolved_str = resolved_str.replace("\'", '')
+        return resolved_str, unresolved
 
 
 class Uploader(object):
