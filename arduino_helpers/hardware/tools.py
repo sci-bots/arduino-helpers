@@ -1,4 +1,4 @@
-from path import path
+from path_helpers import path
 
 
 def get_compiler_dir_by_family(arduino_home_path):

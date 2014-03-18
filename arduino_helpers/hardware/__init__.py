@@ -1,6 +1,6 @@
 from itertools import groupby
 
-from path import path
+from path_helpers import path
 
 
 def traverse(data):

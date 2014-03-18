@@ -1,7 +1,7 @@
 import re
 from copy import deepcopy
 
-from path import path
+from path_helpers import path
 from .hardware import merge
 from .hardware.platform import get_platform_config_by_family
 from .hardware.boards import get_board_data_by_family
