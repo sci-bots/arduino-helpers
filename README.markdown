@@ -1,3 +1,117 @@
+Arduino configuration classes
+=============================
+
+The `arduino_helpers.context` module provides several helper classes, which
+extract board and build configuration information from an Arduino installation
+directory.
+
+    >>> from pprint import pprint
+    >>> from arduino_helpers.context import ArduinoContext, Board, Uploader
+    >>> # In Ubuntu, the Arduino IDE is installed in `/usr/share/arduino`.
+    >>> context = ArduinoContext('/usr/share/arduino/')
+
+There are several methods to query various information, parsed from the Arduino
+IDE configuration files.  For example:
+
+    >>> context.
+    context.arduino_home_path              context.get_libraries_dir_by_family
+    context.get_arduino_dir_root           context.get_platform_config_by_family
+    context.get_board_data_by_family       context.get_tools_dir_by_family
+    context.get_board_names_by_family      context.get_tools_dir_root
+    context.get_bootloaders_dir_by_family  context.get_variants_dir_by_family
+    context.get_compiler_dir_by_family     context.pre_15
+    context.get_cores_dir_by_family        context.runtime_config
+    context.get_firmwares_dir_by_family
+
+Now, let's print the list of available `avr`-based Arduino boards _(in Arduino
+versions <1.5, `avr` is the only board family)_:
+
+    >>> pprint(context.get_board_names_by_family()['avr'])
+    ['mini',
+     'pro',
+     'lilypad',
+     'lilypad328',
+     'pro328',
+     'nano',
+     'atmega8',
+     'robotMotor',
+     'pro5v',
+     'fio',
+     'mega2560',
+     'atmega168',
+     'pro5v328',
+     'atmega328',
+     'bt328',
+     'bt',
+     'nano328',
+     'esplora',
+     'diecimila',
+     'mega',
+     'LilyPadUSB',
+     'mini328',
+     'micro',
+     'robotControl',
+     'ethernet',
+     'leonardo',
+     'uno']
+
+Given an Arduino IDE context, we can create a board context, which provides an
+API to query configuration details corresponding to a particular board.  For
+example, let's query the configuration of the `uno` board:
+
+    >>> board = Board(context, 'uno')
+    >>> board.family
+    'avr'
+    >>> board.mcu
+    'atmega328p'
+
+Given our board context, we can create an uploader context, which provides an
+API to query the uploader configuration for our board.  For example:
+
+    >>> uploader = Uploader(board)
+    >>> uploader.speed
+    115200
+    >>> uploader.conf_path
+    path('/usr/share/arduino/hardware/tools/avrdude.conf')
+    >>> uploader.protocol
+    'arduino'
+    >>> uploader.maximum_size
+    32256
+
+The uploader context provides a `flags` attribute, which returns a dictionary
+containing the appropriate `avrdude` configuration flags for uploading.
+
+    >>> pprint(uploader.flags.items())
+    [('-C', path('/usr/share/arduino/hardware/tools/avrdude.conf')),
+     ('-c', 'arduino'),
+     ('-p', 'atmega328p'),
+     ('-b', 115200)]
+
+The flags can be used with the `upload_tool` and `tools_dir` to find the
+`avrdude` path to form a command.
+
+    >>> uploader.upload_tool
+    'avrdude'
+    >>> uploader.tools_dir
+    path('/usr/share/arduino/hardware/tools/avr')
+
+Note that we can reference any board included in the Arduino IDE configuration
+files.  For example, let's look-up the configuration for the `mega2560` board:
+
+    >>> board = Board(context, 'mega2560')
+    >>> board.mcu
+    'atmega2560'
+    >>> uploader = Uploader(board)
+    >>> pprint(uploader.flags.items())
+    [('-C', path('/usr/share/arduino/hardware/tools/avrdude.conf')),
+     ('-c', 'wiring'),
+     ('-p', 'atmega2560'),
+     ('-b', 115200)]
+
+Note that the uploader flags now reflect the correct options for the
+`mega2560`.
+
+
 Board configurations
 ====================
 
