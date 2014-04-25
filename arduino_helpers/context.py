@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import re
 from copy import deepcopy
 
@@ -39,7 +40,7 @@ def dump_nested_dict(nested_dict, depth=0, dump_values=False):
 
 def resolve(config_dict, var, default_value=None, error_on_not_found=False):
     if not re.match(r'{[a-zA-Z_]+(\.[a-zA-Z_]+)*}', var):
-        raise ValueError, 'Invalid variable "%s"' % var
+        raise ValueError('Invalid variable "%s"' % var)
     keys = var[1:-1].split('.')
     value = config_dict
     for k in keys:
@@ -54,16 +55,26 @@ class ArduinoContext(object):
     def __init__(self, arduino_install_home):
         self.arduino_home_path = path(arduino_install_home)
         arduino_home = self.arduino_home_path
-        match = re.search(r'''
-            ^ARDUINO \s+
-            (?P<major>\d+) \. (?P<minor>\d+) \. (?P<micro>\d+)'''.strip(),
-            arduino_home.joinpath('revisions.txt').bytes(),
-            re.VERBOSE | re.MULTILINE)
-        self.runtime_config = {'runtime': {'ide': {'path': arduino_home,
-                                                   'version': '%s_%s_%s' %
-                                                   (match.group('major'),
-                                                    match.group('minor'),
-                                                    match.group('micro'))}}}
+        # Check if the specified Arduino installation version is pre-1.5.
+        self.pre_15 = not arduino_home.joinpath('revisions.txt').isfile()
+        if not self.pre_15:
+            # The Arduino installation version is 1.5+, which includes
+            # information about the IDE run-time configuration.
+            match = re.search(r'''
+                ^ARDUINO \s+
+                (?P<major>\d+) \. (?P<minor>\d+) \. (?P<micro>\d+)'''.strip(),
+                              arduino_home.joinpath('revisions.txt').bytes(),
+                              re.VERBOSE | re.MULTILINE)
+            self.runtime_config = {'runtime':
+                                   {'ide': {'path': arduino_home, 'version':
+                                            '%s_%s_%s' %
+                                            (match.group('major'),
+                                             match.group('minor'),
+                                             match.group('micro'))}}}
+        else:
+            # The Arduino installation version is pre-1.5, so there is no IDE
+            # run-time configuration available.
+            self.runtime_config = None
 
     def get_platform_config_by_family(self):
         return get_platform_config_by_family(self.arduino_home_path)
@@ -116,8 +127,12 @@ class Board(object):
         assert(self.family is not None)
         self.name = board_name
         self.config = board_configs_by_family[self.family][board_name]
-        self.platform = (self.arduino_context.get_platform_config_by_family()
-                          [self.family])
+        if self.arduino_context.pre_15:
+            self.platform = None
+        else:
+            self.platform = (self.arduino_context
+                             .get_platform_config_by_family()[self.family])
+
         self.cores_dir = (self.arduino_context.get_cores_dir_by_family()
                           [self.family])
         self.libraries_dir = (self.arduino_context
@@ -137,8 +152,10 @@ class Board(object):
                                                               self.family
                                                               .lower(),
                                                               'system')}}}
-        merge(self.combined_config, self.arduino_context.runtime_config)
-        merge(self.combined_config, self.platform)
+        if self.arduino_context.runtime_config is not None:
+            merge(self.combined_config, self.arduino_context.runtime_config)
+        if self.platform is not None:
+            merge(self.combined_config, self.platform)
         merge(self.combined_config, self.build_config)
         if self.resolve('{compiler.path}') is None:
             compiler_path = self.resolve_recursive('{runtime.ide.path}/'
@@ -156,8 +173,8 @@ class Board(object):
                 return value
 
     def resolve_arduino_vars(self, pattern, extra_dicts=None):
-        var_map = dict([(var, self.resolve(var, extra_dicts))
-                         for var in re.findall(r'{.*?}', pattern)])
+        var_map = dict([(var, self.resolve(var, extra_dicts)) for var in
+                        re.findall(r'{.*?}', pattern)])
         cmd = pattern[:]
         unresolved = []
         resolved = []
@@ -196,6 +213,10 @@ class Board(object):
         resolved_str = resolved_str.replace("\'", '')
         return resolved_str, unresolved
 
+    @property
+    def mcu(self):
+        return self.config['build']['mcu']
+
 
 class Uploader(object):
     def __init__(self, board_context):
@@ -209,18 +230,48 @@ class Uploader(object):
                           .get_tools_dir_by_family()
                           [self.board_context.family])
 
+    @property
+    def flags(self):
+        return OrderedDict([
+            ('-C', self.conf_path),
+            ('-c', self.protocol),
+            ('-p', self.board_context.mcu),
+            ('-b', self.speed),
+        ])
+
+    @property
+    def arduino_extra_flags(self):
+        return OrderedDict([
+            # Disable auto erase for flash memory.
+            # __NB__ Enabled by default by Arduino IDE.
+            ('-D', None),
+        ])
+
+    @property
+    def protocol(self):
+        return self.board_context.config['upload']['protocol']
+
+    @property
+    def speed(self):
+        return int(self.board_context.config['upload']['speed'])
+
+    @property
+    def maximum_size(self):
+        return int(self.board_context.config['upload']['maximum_size'])
+
     def bin(self):
         return (self.board_context.arduino_context.get_tools_dir_root()
                 .joinpath(self.upload_tool))
 
-    def get_conf(self):
+    @property
+    def conf_path(self):
         if self.upload_tool == 'avrdude':
             conf_path = self.tools_dir.joinpath('avr', 'etc', 'avrdude.conf')
             if not conf_path.isfile():
                 conf_path = (self.board_context.arduino_context
                              .get_tools_dir_root().joinpath('avrdude.conf'))
             if not conf_path.isfile():
-                raise IOError, '`avrdude.conf` not found.'
+                raise IOError('`avrdude.conf` not found.')
             return conf_path
 
 
