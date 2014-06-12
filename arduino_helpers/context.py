@@ -272,7 +272,8 @@ class Uploader(object):
 
     def bin(self):
         tool = self.bin_dir.joinpath(self.upload_tool)
-        if platform.platform().startswith('Windows'):
+        os_platform = platform.platform()
+        if os_platform.startswith('Windows'):
             return tool + '.exe'
         else:
             return tool
@@ -312,7 +313,10 @@ class Compiler(object):
 
 
 def auto_context():
-    context_path = (pkg_resources
-                    .resource_filename(__name__, path('lib')
-                                       .joinpath('arduino-1.0.5-base')))
+    if platform.platform().startswith('Linux'):
+        context_path = '/usr/share/arduino'
+    else:
+        context_path = (pkg_resources
+                        .resource_filename(__name__, path('lib')
+                                           .joinpath('arduino-1.0.5-base')))
     return ArduinoContext(context_path)
