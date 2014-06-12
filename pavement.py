@@ -13,7 +13,7 @@ setup(name='arduino_helpers',
       author_email='christian@fobel.net',
       url='http://github.com/wheeler-microfluidics/arduino_helpers.git',
       license='GPLv2',
-      install_requires=['serial_device'],
+      install_requires=['serial_device', 'path_helpers'],
       packages=['arduino_helpers', 'arduino_helpers.hardware',
                 'arduino_helpers.bin'],
       package_data=find_package_data())
