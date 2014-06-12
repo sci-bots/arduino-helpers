@@ -3,3 +3,4 @@ RELEASE-VERSION
 *.pyc
 .ropeproject
 .sconsign.dblite
+setup.py

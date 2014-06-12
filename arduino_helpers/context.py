@@ -1,6 +1,9 @@
+import pkg_resources
+from subprocess import check_output
 from collections import OrderedDict
 import re
 from copy import deepcopy
+import platform
 
 from path_helpers import path
 from .hardware import merge
@@ -65,6 +68,10 @@ class ArduinoContext(object):
                 (?P<major>\d+) \. (?P<minor>\d+) \. (?P<micro>\d+)'''.strip(),
                               arduino_home.joinpath('revisions.txt').bytes(),
                               re.VERBOSE | re.MULTILINE)
+            major = int(match.group('major'))
+            minor = int(match.group('minor'))
+            if major < 1 or (major == 1 and minor < 5):
+                self.pre_15 = True
             self.runtime_config = {'runtime':
                                    {'ide': {'path': arduino_home, 'version':
                                             '%s_%s_%s' %
@@ -162,7 +169,8 @@ class Board(object):
                                                    'hardware/tools/%s/bin' %
                                                    self.family.lower())[0]
             if path(compiler_path).expand().isdir():
-                self.combined_config['compiler']['path'] = compiler_path
+                self.combined_config.setdefault('compiler',
+                                                {})['path'] = compiler_path
 
     def resolve(self, var, extra_dicts=None):
         if extra_dicts is None:
@@ -229,6 +237,9 @@ class Uploader(object):
         self.tools_dir = (self.board_context.arduino_context
                           .get_tools_dir_by_family()
                           [self.board_context.family])
+        self.bin_dir = (self.board_context.arduino_context
+                        .get_compiler_dir_by_family()
+                        [self.board_context.family])
 
     @property
     def flags(self):
@@ -260,19 +271,33 @@ class Uploader(object):
         return int(self.board_context.config['upload']['maximum_size'])
 
     def bin(self):
-        return (self.board_context.arduino_context.get_tools_dir_root()
-                .joinpath(self.upload_tool))
+        tool = self.bin_dir.joinpath(self.upload_tool)
+        if platform.platform().startswith('Windows'):
+            return tool + '.exe'
+        else:
+            return tool
 
     @property
     def conf_path(self):
         if self.upload_tool == 'avrdude':
-            conf_path = self.tools_dir.joinpath('avr', 'etc', 'avrdude.conf')
+            conf_path = self.tools_dir.joinpath('etc', 'avrdude.conf')
             if not conf_path.isfile():
                 conf_path = (self.board_context.arduino_context
                              .get_tools_dir_root().joinpath('avrdude.conf'))
             if not conf_path.isfile():
                 raise IOError('`avrdude.conf` not found.')
             return conf_path
+
+    def upload(self, bitstream_file, port):
+        if self.board_context.family not in ('avr', ):
+            raise NotImplementedError('Upload not supported for board family '
+                                      '`%s`.' % self.board_context.family)
+        flags = self.flags
+        flags['-P'] = port
+        flags['-U'] = 'flash:w:%s:i' % path(bitstream_file).abspath()
+        return check_output(self.bin() + ' ' + ' '.join(map(lambda i: '%s %s' %
+                                                            i, flags.items())),
+                            shell=True)
 
 
 class Compiler(object):
@@ -284,3 +309,10 @@ class Compiler(object):
         bin_prefix = {'avr': 'avr-', 'sam':
                       'arm-none-eabi-'}[self.board_context.family]
         self.bin_prefix = self.bin_dir.joinpath(bin_prefix)
+
+
+def auto_context():
+    context_path = (pkg_resources
+                    .resource_filename(__name__, path('lib')
+                                       .joinpath('arduino-1.0.5-base')))
+    return ArduinoContext(context_path)
