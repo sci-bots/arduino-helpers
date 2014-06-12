@@ -1,16 +1,8 @@
-import sys
-from pprint import pprint
-
-from paver.easy import task, needs, path
+from paver.easy import task, needs
 from paver.setuputils import setup
 
 import version
-# Add package directory to Python path. This enables the use of `arduino_helpers`
-# functions for discovering, e.g., the path to the [AVR][1] tools.
-#
-# [1]: http://en.wikipedia.org/wiki/Atmel_AVR
-sys.path.append(path('.').abspath())
-import arduino_helpers
+
 
 setup(name='arduino_helpers',
       version=version.getVersion(),
@@ -20,6 +12,7 @@ setup(name='arduino_helpers',
       author_email='christian@fobel.net',
       url='http://github.com/wheeler-microfluidics/arduino_helpers.git',
       license='GPLv2',
+      install_requires=['serial_device'],
       packages=['arduino_helpers'])
 
 
