@@ -289,13 +289,15 @@ class Uploader(object):
                 raise IOError('`avrdude.conf` not found.')
             return conf_path
 
-    def upload(self, bitstream_file, port):
+    def upload(self, bitstream_file, port, verify=True):
         if self.board_context.family not in ('avr', ):
             raise NotImplementedError('Upload not supported for board family '
                                       '`%s`.' % self.board_context.family)
         flags = self.flags
         flags['-D'] = None
         flags['-P'] = port
+        if not verify:
+            flags['-V'] = None
         flags['-U'] = 'flash:w:%s:i' % path(bitstream_file).abspath()
         return check_output(self.bin() + ' ' + ' '.join(map(lambda i: '%s %s' %
                                                             i, flags.items())),

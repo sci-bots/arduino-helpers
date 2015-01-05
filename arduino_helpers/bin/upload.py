@@ -14,8 +14,11 @@ def parse_args():
                             'Arduino-compatible board.')
     parser.add_argument('board_name', help='Arduino board name (e.g., `uno`, '
                         '`mega2560`).')
+    parser.add_argument('-V', '--disable-verify', action='store_true',
+                        help='Disable automatic verify check when uploading '
+                        'data.')
     parser.add_argument('hex', type=path, help='Path to `.hex` file.')
-    parser.add_argument('port', help='Serial port.', nargs='?',
+    parser.add_argument('port', help='Serial port.', nargs='+',
                         default=None, choices=available_ports)
     args = parser.parse_args()
     if args.port is None:
@@ -25,8 +28,9 @@ def parse_args():
             # automatically.
             args.port = available_ports[0]
         else:
-            parser.error('No serial port was specified.  Please select one of '
-                         'the following ports: %s' % available_ports)
+            parser.error('No serial port was specified.  Please select at '
+                         'least one of the following ports: %s' %
+                         available_ports)
 
     return args
 
@@ -43,4 +47,5 @@ if __name__ == '__main__':
     context = auto_context()
     board = Board(context, args.board_name)
     uploader = Uploader(board)
-    uploader.upload(args.hex, args.port)
+    for p in args.port:
+        uploader.upload(args.hex, p, verify=(not args.disable_verify))
