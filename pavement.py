@@ -2,6 +2,12 @@ from paver.easy import task, needs
 from paver.setuputils import setup
 from finddata import find_package_data
 
+import os
+import sys
+
+# add the current directory as the first listing on the python path
+# so that we import the correct version.py
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 import version
 
 
