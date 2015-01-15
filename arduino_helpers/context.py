@@ -299,7 +299,7 @@ class Uploader(object):
         if not verify:
             flags['-V'] = None
         flags['-U'] = 'flash:w:%s:i' % path(bitstream_file).abspath()
-        return check_output(self.bin() + ' ' + ' '.join(map(lambda i: '%s %s' %
+        return check_output('"' + self.bin() + '" ' + ' '.join(map(lambda i: '%s "%s"' %
                                                             i, flags.items())),
                             shell=True)
 
