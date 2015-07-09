@@ -18,6 +18,6 @@ def get_board_data_by_family(arduino_home_path):
         hardware_family_directory = arduino_home_path.joinpath('hardware',
                                                                'arduino')
         boards_by_family = dict([(str(d.name),
-                                  parse_config(d.joinpath('boards.txt'))) for d
-                                 in hardware_family_directory.dirs()])
+                                  parse_config(d.joinpath('boards.txt')))
+                                 for d in hardware_family_directory.dirs()])
     return boards_by_family
