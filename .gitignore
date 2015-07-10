@@ -8,3 +8,4 @@ build/
 dist/
 paver-minilib.zip
 *.stackdump
+.ipynb_checkpoints
