@@ -9,3 +9,5 @@ dist/
 paver-minilib.zip
 *.stackdump
 .ipynb_checkpoints
+.project
+.pydevproject
