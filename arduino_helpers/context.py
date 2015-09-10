@@ -1,7 +1,7 @@
 import types
 import sys
 import pkg_resources
-from subprocess import check_output
+from subprocess import check_output, STDOUT
 from collections import OrderedDict
 import re
 from copy import deepcopy
@@ -431,6 +431,7 @@ class Uploader(object):
         flags['-U'] = 'flash:w:%s:i' % path(bitstream_file).abspath()
         return check_output('"' + self.bin() + '" ' + ' '.join(map(lambda i: '%s "%s"' %
                                                             i, flags.items())),
+                            stderr=STDOUT,
                             shell=True)
 
 
