@@ -23,7 +23,7 @@ def upload_firmware(firmware_path, board_name, port=None,
         else:
             raise IOError('No serial port was specified.  Please select one of'
                           ' the following ports: %s' % available_ports)
-    uploader.upload(firmware_path, port, **kwargs)
+    return uploader.upload(firmware_path, port, **kwargs)
 
 
 def upload(board_name, get_firmware, port=None, arduino_install_home=None,
@@ -32,8 +32,8 @@ def upload(board_name, get_firmware, port=None, arduino_install_home=None,
     Upload the first firmware that matches the specified board type.
     '''
     firmware_path = get_firmware(board_name)
-    upload_firmware(firmware_path, board_name, port, arduino_install_home,
-                    **kwargs)
+    return upload_firmware(firmware_path, board_name, port, arduino_install_home,
+                           **kwargs)
 
 
 def get_arg_parser():
