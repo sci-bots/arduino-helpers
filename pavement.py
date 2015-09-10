@@ -5,10 +5,9 @@ import os
 import sys
 
 # add the current directory as the first listing on the python path
-# so that we import the correct version.py and finddata.py
+# so that we import the correct version.py
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 import version
-from finddata import find_package_data
 
 
 setup(name='arduino_helpers',
@@ -22,7 +21,7 @@ setup(name='arduino_helpers',
       install_requires=['serial_device', 'path_helpers'],
       packages=['arduino_helpers', 'arduino_helpers.hardware',
                 'arduino_helpers.bin'],
-      package_data=find_package_data())
+      include_package_data=True)
 
 
 @task
