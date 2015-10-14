@@ -68,12 +68,19 @@ def default_sketchbook_directory(platform_=None):
     if platform_.startswith('Windows'):
         import ctypes
         from ctypes.wintypes import MAX_PATH
-        import win32com.shell.shellcon as shellcon
+
+        try:
+            import win32com.shell.shellcon as shellcon
+
+            documents_csidl_code = shellcon.CSIDL_PERSONAL
+        except ImportError:
+            documents_csidl_code = 0x05  # CSIDL_PERSONAL
 
         dll = ctypes.windll.shell32
         buf = ctypes.create_unicode_buffer(MAX_PATH + 1)
-        success = dll.SHGetSpecialFolderPathW(None, buf,
-                                              shellcon.CSIDL_PERSONAL, False)
+        # Query Windows API to get `Documents` directory for current user.
+        success = dll.SHGetSpecialFolderPathW(None, buf, documents_csidl_code,
+                                              False)
         if not success:
             raise IOError('Could not determine user `Documents` directory.')
 
