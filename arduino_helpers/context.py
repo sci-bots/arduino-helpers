@@ -61,10 +61,9 @@ def resolve(config_dict, var, default_value=None, error_on_not_found=False):
     return value
 
 
-def default_sketchbook_directory(platform_=None):
+def documents_directory(platform_=None):
     if platform_ is None:
         platform_ = platform.platform()
-
     if platform_.startswith('Windows'):
         import ctypes
         from ctypes.wintypes import MAX_PATH
@@ -84,10 +83,13 @@ def default_sketchbook_directory(platform_=None):
         if not success:
             raise IOError('Could not determine user `Documents` directory.')
 
-        documents_directory = path(buf.value)
-        return documents_directory.joinpath('Arduino')
+        return path(buf.value)
     elif (platform_.startswith('Linux') or platform_.startswith('Darwin')):
-        return path('~').expand().joinpath('Arduino')
+        return path('~').expand()
+
+
+def default_sketchbook_directory(platform_=None):
+    return documents_directory().joinpath('Arduino')
 
 
 def sketchbook_directory():
