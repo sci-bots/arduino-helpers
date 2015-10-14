@@ -6,7 +6,7 @@ import sys
 
 # add the current directory as the first listing on the python path
 # so that we import the correct version.py
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, '.')
 import version
 
 

@@ -61,6 +61,34 @@ def resolve(config_dict, var, default_value=None, error_on_not_found=False):
     return value
 
 
+def default_sketchbook_directory(platform_=None):
+    if platform_ is None:
+        platform_ = platform.platform()
+
+    if platform_.startswith('Windows'):
+        import ctypes
+        from ctypes.wintypes import MAX_PATH
+        import win32com.shell.shellcon as shellcon
+
+        dll = ctypes.windll.shell32
+        buf = ctypes.create_unicode_buffer(MAX_PATH + 1)
+        success = dll.SHGetSpecialFolderPathW(None, buf,
+                                              shellcon.CSIDL_PERSONAL, False)
+        if not success:
+            raise IOError('Could not determine user `Documents` directory.')
+
+        documents_directory = path(buf.value)
+        return documents_directory.joinpath('Arduino')
+    elif (platform_.startswith('Linux') or platform_.startswith('Darwin')):
+        return path('~').expand().joinpath('Arduino')
+
+
+def sketchbook_directory():
+    import os
+
+    return os.environ.get('SKETCHBOOK_HOME', default_sketchbook_directory())
+
+
 class ArduinoContext(object):
     def __init__(self, arduino_install_home):
         self.arduino_home_path = path(arduino_install_home)
