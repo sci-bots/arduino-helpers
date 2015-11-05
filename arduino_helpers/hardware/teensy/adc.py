@@ -4,60 +4,60 @@ import pandas as pd
 
 # Description of ADC registers
 ADC_DESCRIPTIONS_TSV = '''
-full_name	short_description	description
-CLMD	ADC Minus-Side General Calibration Value Register
-CLPS	ADC Plus-Side General Calibration Value Register
-CLMS	ADC Minus-Side General Calibration Value Register
-CLPD	ADC Plus-Side General Calibration Value Register
-PG	ADC Plus-Side Gain Register
-RB	ADC Data Result Register
-RA	ADC Data Result Register
-OFS	ADC Offset Correction Register
-MG	ADC Minus-Side Gain Register
-CLP1	ADC Plus-Side General Calibration Value Register
-CLP0	ADC Plus-Side General Calibration Value Register
-CLP3	ADC Plus-Side General Calibration Value Register
-CLP2	ADC Plus-Side General Calibration Value Register
-CV2	Compare Value Register
-CLP4	ADC Plus-Side General Calibration Value Register
-CV1	Compare Value Register
-CLM2	ADC Minus-Side General Calibration Value Register
-CLM3	ADC Minus-Side General Calibration Value Register
-CLM0	ADC Minus-Side General Calibration Value Register
-CLM1	ADC Minus-Side General Calibration Value Register
-CLM4	ADC Minus-Side General Calibration Value Register
-CFG2.MUXSEL	ADC mux select	 0: ADxxa channels selected, 1: ADxxb channels selected
-CFG2.ADLSTS	Long sample time select	 0: 20 extra ADCK cycles (default), 1: 12 extra ADCK cycles, 2: 6 extra ADCK cycles, 3: 2 extra ADCK cycles
-CFG2.ADHSC	High-speed configuration
-CFG2.ADACKEN	Asynchronous clock output enable
-CFG1.ADLSMP	Sample time configuration	 0: Short sample time, 1: Long sample time
-CFG1.ADICLK	Input clock select	 0: Bus clock, 1: Bus clock/2, 2: Alternate clock (ALTCLK), 3: Asynchronous clock (ADACK)
-CFG1.MODE	Conversion mode selection	 0: 8-bit, 1: 12-bit, 2: 10-bit, 3: 16-bit
-CFG1.ADIV	Clock divide select	 0: /1, 1: /2, 2: /4, 3: /8
-CFG1.ADLPC	Low-power configuration
-SC1A.COCO	Conversion complete flag
-SC1A.DIFF	Differential mode enable
-SC1A.AIEN	Interrupt enable
-SC1A.ADCH	Input channel select
-SC1B.COCO	Conversion complete flag
-SC1B.DIFF	Differential mode enable
-SC1B.AIEN	Interrupt enable
-SC1B.ADCH	Input channel select
-PGA.PGAEN	PGA enable
-PGA.PGALPb	PGA low-power mode control
-PGA.PGAG	PGA Gain setting, $PGA~gain = 2^{PGAG}$	 0: 1, 1: 2, 2: 4, 3: 8, 4: 16, 5: 32, 6: 64
-SC3.AVGE	Hardware average enable
-SC3.ADCO	Continuous conversion enable
-SC3.AVGS	Hardware average select	 Samples averaged - 0: 4, 1: 8, 0: 16, 0: 32
-SC3.CALF	Calibration failed flag
-SC3.CAL	Calibration
-SC2.DMAEN	DMA enable	 1: 1 DMA is enabled and will assert the ADC DMA request during an ADC conversion complete event noted when any of the `SC1n[COCO]` flags is asserted.
-SC2.REFSEL	Voltage reference selection	 0: Default, 1: Alternate, 2-3: Reserved
-SC2.ADACT	Conversion active
-SC2.ACFGT	Compare function greater than enable
-SC2.ADTRG	Conversion trigger select	 0: Software trigger, 1: Hardware trigger
-SC2.ACREN	Compare function range enable
-SC2.ACFE	Compare function enable
+full_name	short_description	description	page
+CLMD	ADC Minus-Side General Calibration Value Register		31.3.19/671
+CLPS	ADC Plus-Side General Calibration Value Register		31.3.12/667
+CLMS	ADC Minus-Side General Calibration Value Register		31.3.20/672
+CLPD	ADC Plus-Side General Calibration Value Register		31.3.11/666
+PG	ADC Plus-Side Gain Register		31.3.9/665
+RB	ADC Data Result Register		31.3.4/659
+RA	ADC Data Result Register		31.3.4/659
+OFS	ADC Offset Correction Register		31.3.8/665
+MG	ADC Minus-Side Gain Register		31.3.10/666
+CLP1	ADC Plus-Side General Calibration Value Register		31.3.16/669
+CLP0	ADC Plus-Side General Calibration Value Register		31.3.17/669
+CLP3	ADC Plus-Side General Calibration Value Register		31.3.14/668
+CLP2	ADC Plus-Side General Calibration Value Register		31.3.15/668
+CV2	Compare Value Register		31.3.5/660
+CLP4	ADC Plus-Side General Calibration Value Register		31.3.13/667
+CV1	Compare Value Register		31.3.5/660
+CLM2	ADC Minus-Side General Calibration Value Register		31.3.23/673
+CLM3	ADC Minus-Side General Calibration Value Register		31.3.22/673
+CLM0	ADC Minus-Side General Calibration Value Register		31.3.25/674
+CLM1	ADC Minus-Side General Calibration Value Register		31.3.24/674
+CLM4	ADC Minus-Side General Calibration Value Register		31.3.21/672
+CFG2.MUXSEL	ADC mux select	 0: ADxxa channels selected, 1: ADxxb channels selected	31.3.3/658
+CFG2.ADLSTS	Long sample time select	 0: 20 extra ADCK cycles (default), 1: 12 extra ADCK cycles, 2: 6 extra ADCK cycles, 3: 2 extra ADCK cycles	31.3.3/658
+CFG2.ADHSC	High-speed configuration		31.3.3/658
+CFG2.ADACKEN	Asynchronous clock output enable		31.3.3/658
+CFG1.ADLSMP	Sample time configuration	 0: Short sample time, 1: Long sample time	31.3.2/656
+CFG1.ADICLK	Input clock select	 0: Bus clock, 1: Bus clock/2, 2: Alternate clock (ALTCLK), 3: Asynchronous clock (ADACK)	31.3.2/656
+CFG1.MODE	Conversion mode selection	 0: 8-bit, 1: 12-bit, 2: 10-bit, 3: 16-bit	31.3.2/656
+CFG1.ADIV	Clock divide select	 0: /1, 1: /2, 2: /4, 3: /8	31.3.2/656
+CFG1.ADLPC	Low-power configuration		31.3.2/656
+SC1A.COCO	Conversion complete flag		31.3.1/653
+SC1A.DIFF	Differential mode enable		31.3.1/653
+SC1A.AIEN	Interrupt enable		31.3.1/653
+SC1A.ADCH	Input channel select		31.3.1/653
+SC1B.COCO	Conversion complete flag		31.3.1/653
+SC1B.DIFF	Differential mode enable		31.3.1/653
+SC1B.AIEN	Interrupt enable		31.3.1/653
+SC1B.ADCH	Input channel select		31.3.1/653
+PGA.PGAEN	PGA enable		31.3.18/670
+PGA.PGALPb	PGA low-power mode control		31.3.18/670
+PGA.PGAG	PGA Gain setting, $PGA~gain = 2^{PGAG}$	 0: 1, 1: 2, 2: 4, 3: 8, 4: 16, 5: 32, 6: 64	31.3.18/670
+SC3.AVGE	Hardware average enable		31.3.7/663
+SC3.ADCO	Continuous conversion enable		31.3.7/663
+SC3.AVGS	Hardware average select	 Samples averaged - 0: 4, 1: 8, 0: 16, 0: 32	31.3.7/663
+SC3.CALF	Calibration failed flag		31.3.7/663
+SC3.CAL	Calibration		31.3.7/663
+SC2.DMAEN	DMA enable	 1: 1 DMA is enabled and will assert the ADC DMA request during an ADC conversion complete event noted when any of the `SC1n[COCO]` flags is asserted.	31.3.6/661
+SC2.REFSEL	Voltage reference selection	 0: Default, 1: Alternate, 2-3: Reserved	31.3.6/661
+SC2.ADACT	Conversion active		31.3.6/661
+SC2.ACFGT	Compare function greater than enable		31.3.6/661
+SC2.ADTRG	Conversion trigger select	 0: Software trigger, 1: Hardware trigger	31.3.6/661
+SC2.ACREN	Compare function range enable		31.3.6/661
+SC2.ACFE	Compare function enable		31.3.6/661
 '''.strip()
 
 ADC_DESCRIPTIONS = pd.read_csv(io.BytesIO(ADC_DESCRIPTIONS_TSV),
@@ -78,6 +78,27 @@ ADC_SC1A_PIN_MUX = (0x80)
 ADC_SC1A_PIN_DIFF = (0x40)
 # PGA mask. The pins can use PGA on that ADC
 ADC_SC1A_PIN_PGA = (0x80)
+
+
+# translate SC1A to pin number
+SC1A_TO_CHANNEL_ADC0 = [
+    # 0-13
+    34, 0, 0, 36, 23, 14, 20, 21, 16, 17, 0, 0, 19, 18,
+    # 14-21
+    15, 22, 23, 0, 0, 35, 0, 37,
+    # VREF_OUT, A14, temp. sensor, bandgap, VREFH, VREFL.
+    39, 40, 0, 0, 38, 41, 42, 43,
+    # 31 means disabled, but just in case
+    0]
+
+SC1A_TO_CHANNEL_ADC1 = [
+    # 0-13. 5a=26, 5b=27, 4b=28, 4a=31
+    36, 0, 0, 34, 28, 26, 29, 30, 16, 17, 0, 0, 0, 0,
+    # 14-21
+    0, 0, 0, 0, 39, 37, 0, 0,
+    # 22-29. VREF_OUT, A14, temp. sensor, bandgap, VREFH, VREFL.
+    0, 0, 0, 0, 38, 41, 0, 42,
+    43]
 
 
 # New version, gives directly the sc1a number. 0x1F=31 deactivates the ADC.
