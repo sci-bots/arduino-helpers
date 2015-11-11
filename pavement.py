@@ -10,13 +10,13 @@ sys.path.insert(0, '.')
 import version
 
 
-setup(name='arduino_helpers',
+setup(name='arduino-helpers',
       version=version.getVersion(),
       description='Helper functions for reading configs, etc. from an '
       'installed Arduino directory.',
       author='Christian Fobel',
       author_email='christian@fobel.net',
-      url='http://github.com/wheeler-microfluidics/arduino_helpers.git',
+      url='http://github.com/wheeler-microfluidics/arduino-helpers.git',
       license='GPLv2',
       install_requires=['serial_device', 'path_helpers'],
       packages=['arduino_helpers', 'arduino_helpers.hardware',
