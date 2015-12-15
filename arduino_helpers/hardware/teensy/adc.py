@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 import io
+
 import pandas as pd
+from . import ANALOG_CHANNELS
 
 
 # Description of ADC registers
@@ -159,3 +162,13 @@ CHANNEL_TO_SC1A_DIFF_ADC1 = [
     # A10-A11 (DAD3), A12-A13 (DAD0, PGA1)
     3, 3, 0 + ADC_SC1A_PIN_PGA, 0 + ADC_SC1A_PIN_PGA
 ]
+
+SC1A_PINS = ANALOG_CHANNELS.map(lambda x: CHANNEL_TO_SC1A_ADC0[x])
+ADC_SC1_DIFF = 0x20  # Differential mode enable
+SC1A_PINS['DAD0'] = (SC1A_PINS.A10 - SC1A_PINS.A10) + ADC_SC1_DIFF
+SC1A_PINS['DAD3'] = (SC1A_PINS.A13 - SC1A_PINS.A10) + ADC_SC1_DIFF
+SC1A_PINS['PGA0'] = 2 + ADC_SC1_DIFF  # PGA0 is channel 2 in differential mode (3.7.1.3.1.1/98)
+
+ADC0_RA = 0x4003B010  # ADC data result register
+ADC0_RB = 0x4003B014  # ADC data result register
+ADC0_SC1A = 0x4003B000  # ADC status and control registers 1

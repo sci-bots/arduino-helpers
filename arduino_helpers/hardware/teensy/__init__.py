@@ -1,3 +1,18 @@
+# -*- coding: utf-8 -*-
+import pandas as pd
+
+HIGH = 1
+LOW = 0
+INPUT = 0
+OUTPUT = 1
+INPUT_PULLUP = 2
+LSBFIRST = 0
+MSBFIRST = 1
+_BV = lambda n: (1 << (n))
+CHANGE = 4
+FALLING = 2
+RISING = 3
+
 LED_BUILTIN = 13
 
 ADC_0 = 0
@@ -50,3 +65,12 @@ A17 = 28
 A18 = 29
 A19 = 30
 A20 = 31
+
+ADC_REF_DEFAULT = 0
+ADC_REF_ALT = 1
+ADC_REF_3V3 = ADC_REF_DEFAULT
+ADC_REF_1V2 = ADC_REF_ALT
+
+ANALOG_CHANNELS = pd.Series([A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11,
+                             A12, A13, A14, A15, A16, A17, A18, A19, A20],
+                            index=['A%d' % i for i in xrange(21)])

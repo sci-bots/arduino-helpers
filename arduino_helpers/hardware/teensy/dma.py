@@ -113,3 +113,8 @@ MUX_CHCFG_DESCRIPTIONS = pd.read_csv(io.BytesIO(MUX_CHCFG_DESCRIPTIONS_TSV),
                                      sep='\t').set_index('full_name')
 MUX_CHCFG_DESCRIPTIONS.loc[MUX_CHCFG_DESCRIPTIONS.description.isnull(),
                            'description'] = ''
+
+DMAMUX_SOURCE_ADC0 = 40  # from `kinetis.h`
+DMAMUX_SOURCE_ADC1 = 41  # from `kinetis.h`
+DMAMUX_SOURCE_PDB = 48  # from `kinetis.h`
+HW_TCDS_ADDR = 0x40009000
