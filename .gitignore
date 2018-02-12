@@ -6,7 +6,6 @@ RELEASE-VERSION
 setup.py
 build/
 dist/
-paver-minilib.zip
 *.stackdump
 .ipynb_checkpoints
 .project

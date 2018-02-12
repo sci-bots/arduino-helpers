@@ -1,7 +1,9 @@
-from paver.easy import task, needs
-from paver.setuputils import setup
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import print_function
 
-import os
+from setuptools import setup
 import sys
 
 # add the current directory as the first listing on the python path
@@ -22,10 +24,3 @@ setup(name='arduino-helpers',
       packages=['arduino_helpers', 'arduino_helpers.hardware',
                 'arduino_helpers.bin'],
       include_package_data=True)
-
-
-@task
-@needs('generate_setup', 'minilib', 'setuptools.command.sdist')
-def sdist():
-    """Overrides sdist to make sure that our setup.py is generated."""
-    pass
