@@ -1,13 +1,15 @@
-import types
-import sys
-import pkg_resources
-from subprocess import check_output, STDOUT
+from __future__ import print_function
+
 from collections import OrderedDict
-import re
 from copy import deepcopy
+from subprocess import check_output, STDOUT
+import pkg_resources
 import platform
+import re
+import sys
 
 from path_helpers import path
+
 from .hardware import merge
 from .hardware.platform import get_platform_config_by_family
 from .hardware.boards import get_board_data_by_family
