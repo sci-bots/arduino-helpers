@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from serial_device import get_serial_ports
 from . context import (auto_context, Board, Uploader,
                                      ArduinoContext)

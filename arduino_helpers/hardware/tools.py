@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 from path_helpers import path
+import six
 
 
 def get_compiler_dir_by_family(arduino_home_path):
@@ -8,7 +10,7 @@ def get_compiler_dir_by_family(arduino_home_path):
     home directory.
     '''
     return dict([(f, d.joinpath('bin')) for f, d in
-                 get_tools_dir_by_family(arduino_home_path).iteritems()])
+                 six.iteritems(get_tools_dir_by_family(arduino_home_path))])
 
 
 def get_tools_dir_by_family(arduino_home_path):

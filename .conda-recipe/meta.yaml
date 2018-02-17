@@ -18,11 +18,20 @@ requirements:
     - path_helpers
     - python
     - serial-device
+    #: .. versionadded:: X.X.X
+    - six
 
   run:
     - path_helpers
     - python
     - serial-device
+    #: .. versionadded:: X.X.X
+    - six
+
+#: .. versionadded:: X.X.X
+test:
+  imports:
+    - arduino_helpers
 
 # source will be downloaded prior to filling in jinja templates
 # Example assumes that this folder has setup.py in it

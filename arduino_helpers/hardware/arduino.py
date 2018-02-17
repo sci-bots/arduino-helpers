@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 from path_helpers import path
+import six
 
 
 def get_dir_by_family(arduino_home_path, dir_name):
@@ -7,7 +9,7 @@ def get_dir_by_family(arduino_home_path, dir_name):
     processor family supported by an Arduino installation home directory.
     '''
     return dict([(family, d.joinpath(dir_name)) for family, d in
-                 get_arduino_dir_by_family(arduino_home_path).iteritems()])
+                 six.iteritems(get_arduino_dir_by_family(arduino_home_path))])
 
 
 def get_variants_dir_by_family(arduino_home_path):

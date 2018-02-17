@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
 
 from serial_device import get_serial_ports
@@ -38,12 +40,12 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    print '# Upload `.hex` #'
-    print ''
-    print '    Board: `%s`' % args.board_name
-    print '      Hex: `%s`' % args.hex
-    print '     Port: `%s`' % args.port
-    print ''
+    print('# Upload `.hex` #')
+    print('')
+    print('    Board: `%s`' % args.board_name)
+    print('      Hex: `%s`' % args.hex)
+    print('     Port: `%s`' % args.port)
+    print('')
     context = auto_context()
     board = Board(context, args.board_name)
     uploader = Uploader(board)

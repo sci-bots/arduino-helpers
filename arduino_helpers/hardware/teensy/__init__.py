@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import pandas as pd
+from six.moves import range
 
 HIGH = 1
 LOW = 0
@@ -73,4 +75,4 @@ ADC_REF_1V2 = ADC_REF_ALT
 
 ANALOG_CHANNELS = pd.Series([A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11,
                              A12, A13, A14, A15, A16, A17, A18, A19, A20],
-                            index=['A%d' % i for i in xrange(21)])
+                            index=['A%d' % i for i in range(21)])

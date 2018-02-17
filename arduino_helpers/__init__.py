@@ -1,4 +1,5 @@
-from context import *
+from __future__ import absolute_import
+from .context import *
 
 from ._version import get_versions
 __version__ = get_versions()['version']
