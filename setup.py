@@ -1,17 +1,16 @@
-from paver.easy import task, needs
-from paver.setuputils import setup
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import print_function
 
-import os
-import sys
+from setuptools import setup
 
-# add the current directory as the first listing on the python path
-# so that we import the correct version.py
-sys.path.insert(0, '.')
-import version
+import versioneer
 
 
 setup(name='arduino-helpers',
-      version=version.getVersion(),
+      version=versioneer.get_version(),
+      cmdclass=versioneer.get_cmdclass(),
       description='Helper functions for reading configs, etc. from an '
       'installed Arduino directory.',
       author='Christian Fobel',
@@ -22,10 +21,3 @@ setup(name='arduino-helpers',
       packages=['arduino_helpers', 'arduino_helpers.hardware',
                 'arduino_helpers.bin'],
       include_package_data=True)
-
-
-@task
-@needs('generate_setup', 'minilib', 'setuptools.command.sdist')
-def sdist():
-    """Overrides sdist to make sure that our setup.py is generated."""
-    pass

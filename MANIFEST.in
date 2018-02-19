@@ -1,7 +1,5 @@
 include README.md
-include RELEASE-VERSION
-include version.py
-include pavement.py
-include paver-minilib.zip
 include setup.py
 recursive-include arduino_helpers *
+include versioneer.py
+include arduino_helpers/_version.py

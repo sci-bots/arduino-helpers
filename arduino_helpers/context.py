@@ -1,13 +1,17 @@
-import types
-import sys
-import pkg_resources
-from subprocess import check_output, STDOUT
+from __future__ import print_function
+
+from __future__ import absolute_import
 from collections import OrderedDict
-import re
 from copy import deepcopy
+from subprocess import check_output, STDOUT
+import pkg_resources
 import platform
+import re
+import sys
 
 from path_helpers import path
+import six
+
 from .hardware import merge
 from .hardware.platform import get_platform_config_by_family
 from .hardware.boards import get_board_data_by_family
@@ -23,7 +27,7 @@ from .hardware.arduino import (get_libraries_dir_by_family,
 def nested_dict_iter(nested_dict, keys=None):
     if keys is None:
         keys = []
-    for k, v in nested_dict.iteritems():
+    for k, v in six.iteritems(nested_dict):
         if isinstance(v, dict):
             for nested_keys, nested_v in nested_dict_iter(v, keys=keys + [k]):
                 yield nested_keys, nested_v
@@ -34,7 +38,7 @@ def nested_dict_iter(nested_dict, keys=None):
 def dump_nested_dict(nested_dict, depth=0, dump_values=False, output=None):
     if output is None:
         output = sys.stdout
-    for k, v in nested_dict.iteritems():
+    for k, v in six.iteritems(nested_dict):
         print >> output, (' ' + ('  ' * depth) +
                           '%s %s' % ('-*'[depth & 0x01], k)),
         if isinstance(v, dict):
@@ -164,8 +168,8 @@ class ArduinoContext(object):
         return get_board_data_by_family(self.arduino_home_path)
 
     def get_board_names_by_family(self):
-        return dict([(k, v.keys()) for k, v in
-                     self.get_board_data_by_family().iteritems()])
+        return dict([(k, list(v.keys())) for k, v in
+                     six.iteritems(self.get_board_data_by_family())])
 
 
 # Below is a table mapping all board names from Arduino 1.0.5 to the board/cpu
@@ -232,7 +236,7 @@ class Board(object):
         if self.arduino_context.pre_15 and cpu is not None:
             raise ValueError('`cpu` is not valid for Arduino versions < 1.5.')
         self.cpu = cpu
-        for family, board_configs in board_configs_by_family.iteritems():
+        for family, board_configs in six.iteritems(board_configs_by_family):
             for name in board_configs:
                 if board_name == name:
                     self.family = family
@@ -328,15 +332,15 @@ class Board(object):
         resolved = []
         unresolved = []
 
-        for var, value in var_map.iteritems():
-            if not isinstance(value, types.StringTypes):
+        for var, value in six.iteritems(var_map):
+            if not isinstance(value, (str,)):
                 unresolved.append(var)
             else:
                 try:
                     cmd = cmd.replace(var, value)
                     resolved.append((var, value))
-                except:
-                    print var, value
+                except Exception:
+                    print(var, value)
                     raise
         return cmd, unresolved
 
@@ -466,8 +470,9 @@ class Uploader(object):
         if not verify:
             flags['-V'] = None
         flags['-U'] = 'flash:w:%s:i' % path(bitstream_file).abspath()
-        return check_output('"' + self.bin() + '" ' + ' '.join(map(lambda i: '%s "%s"' %
-                                                            i, flags.items())),
+        return check_output('"' + self.bin() + '" ' +
+                            ' '.join(['%s "%s"' % i for i in
+                                      list(flags.items())]),
                             stderr=STDOUT,
                             shell=True)
 
