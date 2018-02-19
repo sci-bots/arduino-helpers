@@ -18,14 +18,16 @@ build:
 requirements:
   build:
     - path_helpers
-    - python
+    #: .. versionchanged:: X.X.X
+    - python {{ python }}
     - serial-device
     #: .. versionadded:: X.X.X
     - six
 
   run:
     - path_helpers
-    - python
+    #: .. versionchanged:: X.X.X
+    - python {{ python }}
     - serial-device
     #: .. versionadded:: X.X.X
     - six
