@@ -11,7 +11,8 @@ MCR.MDIS	Module Disable	Disables the module clock. This field must be enabled be
 MCR.FRZ	Freeze	Allows the timers to be stopped when the device enters the Debug mode. 0: Timers continue to run in Debug mode. 1: Timers are stopped in Debug mode.	37.3.1/903
 '''.strip()
 
-REGISTERS_DESCRIPTIONS = pd.read_csv(io.BytesIO(REGISTERS_DESCRIPTIONS_TSV),
+REGISTERS_DESCRIPTIONS = pd.read_csv(io.BytesIO(REGISTERS_DESCRIPTIONS_TSV
+                                                .encode('utf8')),
                                      sep='\t').set_index('full_name')
 REGISTERS_DESCRIPTIONS.loc[REGISTERS_DESCRIPTIONS.description.isnull(),
                            'description'] = ''
@@ -29,7 +30,7 @@ TFLG.TIF	Timer Interrupt Flag	Sets to 1 at the end of the timer period. Writing 
 '''.strip()
 
 TIMER_CONFIG_DESCRIPTIONS = \
-    pd.read_csv(io.BytesIO(TIMER_CONFIG_DESCRIPTIONS_TSV),
+    pd.read_csv(io.BytesIO(TIMER_CONFIG_DESCRIPTIONS_TSV.encode('utf8')),
                 sep='\t').set_index('full_name')
 TIMER_CONFIG_DESCRIPTIONS.loc[TIMER_CONFIG_DESCRIPTIONS.description.isnull(),
                               'description'] = ''

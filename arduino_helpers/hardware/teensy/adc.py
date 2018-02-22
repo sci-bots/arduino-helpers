@@ -64,7 +64,7 @@ SC2.ACREN	Compare function range enable		31.3.6/661
 SC2.ACFE	Compare function enable		31.3.6/661
 '''.strip()
 
-ADC_DESCRIPTIONS = pd.read_csv(io.BytesIO(ADC_DESCRIPTIONS_TSV),
+ADC_DESCRIPTIONS = pd.read_csv(io.BytesIO(ADC_DESCRIPTIONS_TSV.encode('utf8')),
                                sep='\t').set_index('full_name')
 ADC_DESCRIPTIONS.loc[ADC_DESCRIPTIONS.description.isnull(), 'description'] = ''
 

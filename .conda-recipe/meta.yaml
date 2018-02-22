@@ -36,6 +36,19 @@ requirements:
 test:
   imports:
     - arduino_helpers
+    - arduino_helpers._version
+    - arduino_helpers.bin.upload
+    - arduino_helpers.context
+    - arduino_helpers.hardware.arduino
+    - arduino_helpers.hardware.boards
+    - arduino_helpers.hardware.platform
+    - arduino_helpers.hardware.teensy.adc
+    - arduino_helpers.hardware.teensy.dma
+    - arduino_helpers.hardware.teensy.pdb
+    - arduino_helpers.hardware.teensy.pit
+    - arduino_helpers.hardware.teensy.sim
+    - arduino_helpers.hardware.tools
+    - arduino_helpers.upload
 
 # source will be downloaded prior to filling in jinja templates
 # Example assumes that this folder has setup.py in it
