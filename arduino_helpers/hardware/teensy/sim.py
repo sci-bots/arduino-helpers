@@ -24,7 +24,8 @@ DMAMUX	DMA Mux Clock Gate Control	This bit controls the clock gate to the DMA Mu
 FTFL	Flash Memory Clock Gate Control	This bit controls the clock gate to the flash memory. Flash reads are still supported while the flash memory is clock gated, but entry into low power modes is blocked. 0: Clock disabled, 1: Clock enabled	12.2.13/256
 '''.strip()
 
-SCGC6_DESCRIPTIONS = pd.read_csv(io.BytesIO(SCGC6_DESCRIPTIONS_TSV),
+SCGC6_DESCRIPTIONS = pd.read_csv(io.BytesIO(SCGC6_DESCRIPTIONS_TSV
+                                            .encode('utf8')),
                                  sep='\t').set_index('full_name')
 SCGC6_DESCRIPTIONS.loc[SCGC6_DESCRIPTIONS.description.isnull(),
                        'description'] = ''
@@ -37,7 +38,8 @@ full_name	short_description	description	page
 DMA	DMA Clock Gate Control	This bit controls the clock gate to the DMA module. 0: Clock disabled, 1: Clock enabled	12.2.14/259
 '''.strip()
 
-SCGC7_DESCRIPTIONS = pd.read_csv(io.BytesIO(SCGC7_DESCRIPTIONS_TSV),
+SCGC7_DESCRIPTIONS = pd.read_csv(io.BytesIO(SCGC7_DESCRIPTIONS_TSV
+                                            .encode('utf8')),
                                  sep='\t').set_index('full_name')
 SCGC7_DESCRIPTIONS.loc[SCGC7_DESCRIPTIONS.description.isnull(),
                        'description'] = ''

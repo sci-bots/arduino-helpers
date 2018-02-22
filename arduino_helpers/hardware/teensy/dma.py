@@ -47,7 +47,7 @@ BITER_ELINKNO.ELINK	Enable channel-to-channel linking on minor-loop complete	See
 BITER_ELINKNO.ITER	Beginning Major Iteration Count	See CITER_ELINKNO[CITER].	21.3.31/427
 '''.strip()
 
-TCD_DESCRIPTIONS = pd.read_csv(io.BytesIO(TCD_DESCRIPTIONS_TSV),
+TCD_DESCRIPTIONS = pd.read_csv(io.BytesIO(TCD_DESCRIPTIONS_TSV.encode('utf8')),
                                sep='\t').set_index('full_name')
 TCD_DESCRIPTIONS.loc[TCD_DESCRIPTIONS.description.isnull(), 'description'] = ''
 
@@ -82,7 +82,8 @@ ERR	Error Register		21.3.14/409
 HRS	Hardware Request Status Register		21.3.15/411
 '''.strip()
 
-REGISTERS_DESCRIPTIONS = pd.read_csv(io.BytesIO(REGISTERS_DESCRIPTIONS_TSV),
+REGISTERS_DESCRIPTIONS = pd.read_csv(io.BytesIO(REGISTERS_DESCRIPTIONS_TSV
+                                                .encode('utf8')),
                                      sep='\t').set_index('full_name')
 REGISTERS_DESCRIPTIONS.loc[REGISTERS_DESCRIPTIONS.description.isnull(),
                            'description'] = ''
@@ -96,7 +97,8 @@ DPA	Disable Preempt Ability	0: Channel n can suspend a lower priority channel, 1
 CHPRI	Channel n Arbitration Priority	Channel priority when fixed-priority arbitration is enabled.  NOTE: Reset value for the channel priority fields, CHPRI, is equal to the corresponding channel number for each priority register, i.e., DCHPRI15[CHPRI] equals 0b1111.	21.3.16/414
 '''.strip()
 
-DCHPRI_DESCRIPTIONS = pd.read_csv(io.BytesIO(DCHPRI_DESCRIPTIONS_TSV),
+DCHPRI_DESCRIPTIONS = pd.read_csv(io.BytesIO(DCHPRI_DESCRIPTIONS_TSV
+                                             .encode('utf8')),
                                   sep='\t').set_index('full_name')
 DCHPRI_DESCRIPTIONS.loc[DCHPRI_DESCRIPTIONS.description.isnull(),
                         'description'] = ''
@@ -110,7 +112,8 @@ TRIG	DMA Channel Trigger Enable	Enables the periodic trigger capability for the 
 SOURCE	DMA Channel Source (Slot)	Specifies which DMA source, if any, is routed to a particular DMA channel. See your device's chip configuration details for further details about the peripherals and their slot numbers.	20.3.1/366
 '''.strip()
 
-MUX_CHCFG_DESCRIPTIONS = pd.read_csv(io.BytesIO(MUX_CHCFG_DESCRIPTIONS_TSV),
+MUX_CHCFG_DESCRIPTIONS = pd.read_csv(io.BytesIO(MUX_CHCFG_DESCRIPTIONS_TSV
+                                                .encode('utf8')),
                                      sep='\t').set_index('full_name')
 MUX_CHCFG_DESCRIPTIONS.loc[MUX_CHCFG_DESCRIPTIONS.description.isnull(),
                            'description'] = ''
