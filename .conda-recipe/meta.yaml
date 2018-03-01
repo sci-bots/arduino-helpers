@@ -19,7 +19,8 @@ requirements:
   build:
     - path_helpers
     #: .. versionchanged:: 0.6
-    - python {{ python }}
+    #: .. versionchanged:: 0.6.2
+    - python
     - serial-device
     #: .. versionadded:: 0.6
     - six
@@ -27,7 +28,8 @@ requirements:
   run:
     - path_helpers
     #: .. versionchanged:: 0.6
-    - python {{ python }}
+    #: .. versionchanged:: 0.6.2
+    - python
     - serial-device
     #: .. versionadded:: 0.6
     - six
