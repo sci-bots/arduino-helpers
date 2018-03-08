@@ -17,20 +17,20 @@ build:
 
 requirements:
   build:
-    - path_helpers
+    - path_helpers >=0.7
     #: .. versionchanged:: 0.6
     #: .. versionchanged:: 0.6.2
     - python
-    - serial-device
+    - serial-device >=0.11
     #: .. versionadded:: 0.6
     - six
 
   run:
-    - path_helpers
+    - path_helpers >=0.7
     #: .. versionchanged:: 0.6
     #: .. versionchanged:: 0.6.2
     - python
-    - serial-device
+    - serial-device >=0.11
     #: .. versionadded:: 0.6
     - six
 
